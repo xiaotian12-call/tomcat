@@ -1,0 +1,168 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!--框架必需start-->
+<script type="text/javascript" src="../js/jquery-1.4.js"></script>
+<script type="text/javascript" src="../js/framework.js"></script>
+<link href="../css/import_basic.css" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" type="text/css" id="skin" />
+<!--框架必需end-->
+<script type="text/javascript" src="../js/nav/ddaccordion.js"></script>
+<script type="text/javascript" src="../js/text/text-overflow.js"></script>
+<style>
+a {
+	
+}
+
+.categoryitems span {
+	width: 160px;
+}
+</style>
+<script>
+	//打开内页时出现进度条
+	$(function() {
+		$(".categoryitems a[target*=frmright]").click(function() {
+			showProgressBar();
+		})
+	})
+	function ccc() {
+		doAjax("../Removeabc", null, function(rstText) {
+			var result = eval('(' + rstText + ')');
+			if (result.status == 'OK') {
+				alert("查询成功");
+				return true;
+			} else {
+				alert("查询失败");
+				return false;
+			}
+		});
+	}
+
+	function getXMLHttpResquest() {
+		var request;
+		if (window.XMLHttpRequest) {
+			request = new XMLHttpRequest();
+		} else {
+			try {
+				request = new ActiveXObject("Microsoft.XMLHTTP");
+			} catch (e) {
+				request = new ActiveXObject("Msxml2.XMLHTTP");
+			}
+		}
+		return request;
+	}
+
+	function doAjax(url, params, callBack) {
+		var req = getXMLHttpResquest();
+		if (req != null) {
+			req.onreadystatechange = function() {
+				if (req.readyState == 4) {
+					if (200 == req.status) {
+						callBack(req.responseText);
+
+					} else if (404 == req.status) {
+						//alert('404-HTTP请求路径错误！');
+					} else if (500 == req.status) {
+						alert('500-HTTP请求路径错误！');
+					}
+
+				}
+
+			};
+			req.open("POST", url, true);
+			req.setRequestHeader("Content-Type",
+					"application/x-www-form-urlencoded;;charset=utf-8");
+			req.send(params);
+		}
+	}
+	$(function() {
+		var power;
+		var html = "";
+		$.ajax({
+			url : "../PowerServlet",
+			type : "post",
+			dataType : "json",
+			success : function(data) {
+			if(data=="0"){
+				alert("此用户是新注册用户还没有为他分配角色！")
+			}
+			$.each(
+				data,
+				function(i, item) {
+				power = item.power;
+			 /* alert(item.xqzj_qx);
+				alert(item.xqgl_qx);
+				alert(item.yhxx_qx);
+				alert(item.yhxg_qx);
+				alert(item.xssh_qx);
+				alert(item.bmsh_qx);
+				alert(item.tjcx_qx); */
+				if (power == 1) {
+					html += "<li><a href='../templete/yygl.jsp' target='frmright'><span class='text_slice'>用户管理</span></a></li>"
+					+ "<li><a onclick='ccc()' href='../templete/jsgl.jsp' target='frmright'><span class='text_slice'>角色管理</span></a></li>"
+					+ "<li><a href='../templete/qxgl.jsp' target='frmright'><span class='text_slice'>权限管理</span></a></li>"
+					+ "<li><a onclick='ccc()' href='../templete/mywj.jsp' target='frmright'><span class='text_slice'>需求管理</span></a></li>"
+					+ "<li><a onclick='ccc()' href='../templete/xssh.jsp' target='frmright'><span class='text_slice'>形式审核</span></a></li>"
+					+ "<li><a onclick='ccc()' href='../templete/bmsh.jsp' target='frmright'><span class='text_slice'>部门审核</span></a></li>"
+					+ "<li><a onclick='ccc()' href='../templete/tongji.jsp' target='frmright'><span class='text_slice'>统计查询</span></a></li>"
+					+ "<li><a href='../yonghu/mmxg.jsp' target='frmright'><span class='text_slice'>修改密码</span></a></li>"
+					+ "<li><a href='../templete/xtjs.html' target='frmright'><span class='text_slice'>系统介绍</span></a></li>"
+					+ "<li><a href='../templete/bzwj.html' target='frmright'><span class='text_slice'>帮助文件</span></a></li>"
+					+ "<li><a href='../templete/cjwtjd.html' target='frmright'><span class='text_slice'>常见问题解答</span></a></li>";
+					//$("#category").html(html);	
+				} else {
+					if (item.xqzj_qx == 0) {
+						html += "<li><a href='../templete/table.jsp' target='frmright'><span class='text_slice'>需求征集</span></a></li>";
+					}
+					if (item.xqgl_qx == 0) {
+						html += "<li><a onclick='ccc()' href='../templete/mywj.jsp' target='frmright'><span class='text_slice'>需求管理</span></a></li>";
+					}
+					if (item.yhxx_qx == 0) {
+						html += "<li><a href='../yonghu/yhxx.jsp' target='frmright'><span class='text_slice'>用户信息</span></a></li>";
+					}
+					if (item.yhxg_qx == 0) {
+						html += "<li><a href='../yonghu/mmxg.jsp' target='frmright'><span class='text_slice'>修改密码</span></a></li>";
+					}
+					if (item.xssh_qx == 0) {
+						html += "<li><a onclick='ccc()' href='../templete/xssh.jsp' target='frmright'><span class='text_slice'>形式审核</span></a></li>";
+					}
+					if (item.bmsh_qx == 0) {
+						html += "<li><a onclick='ccc()' href='../templete/bmsh.jsp' target='frmright'><span class='text_slice'>部门审核</span></a></li>";
+					}
+					if (item.tjcx_qx == 0) {
+						html += "<li><a onclick='ccc()' href='../templete/tongji.jsp' target='frmright'><span class='text_slice'>统计查询</span></a></li>";
+					}
+					html += "<li><a href='../templete/xtjs.html' target='frmright'><span class='text_slice'>系统介绍</span></a></li>";
+					html += "<li><a href='../templete/bzwj.html' target='frmright'><span class='text_slice'>帮助文件</span></a></li>";
+					html += "<li><a href='../templete/cjwtjd.html' target='frmright'><span class='text_slice'>常见问题解答</span></a></li>";
+
+				}
+				$("#category").html(html);
+
+				});
+			}
+		});
+
+	})
+</script>
+<body leftFrame="true">
+	<div id="scrollContent">
+		<div class="arrowlistmenu">
+			<div class="menuheader expandable">系统菜单</div>
+			<ul class="categoryitems" id="category">
+				<!-- <li><a><span>第二级1</span></a>
+					<ul>
+						<li><a><span>第三极1</span></a>
+							<ul>
+								<li><a href="javascript:;"><span>第四级1</span></a></li>
+								<li><a href="javascript:;"><span>第四级2</span></a></li>
+							</ul></li>
+						<li><a href="javascript:;"><span>第三极2</span></a></li>
+						<li><a href="javascript:;"><span>第三极3</span></a></li>
+					</ul>
+				</li> -->
+			</ul>
+		</div>
+	</div>
+</body>
+</html>
